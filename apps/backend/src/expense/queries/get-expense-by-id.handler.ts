@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetExpenseByIdQuery } from './get-expense-by-id.query';
 import { ExpenseRepository } from '../expense.repository';
-import { ExpenseWithCategory } from '../commands/create-expense.handler';
+import { ExpenseWithCategory, toExpenseWithCategory } from '../expense-with-category';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 
 @QueryHandler(GetExpenseByIdQuery)
@@ -21,6 +21,6 @@ export class GetExpenseByIdHandler
       throw new ForbiddenException('Access denied');
     }
 
-    return expense;
+    return toExpenseWithCategory(expense);
   }
 }

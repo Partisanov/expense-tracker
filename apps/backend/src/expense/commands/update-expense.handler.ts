@@ -3,7 +3,7 @@ import { UpdateExpenseCommand } from './update-expense.command';
 import { ExpenseRepository } from '../expense.repository';
 import { CategoryRepository } from '../../category/category.repository';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
-import { ExpenseWithCategory } from './create-expense.handler';
+import { ExpenseWithCategory, toExpenseWithCategory } from '../expense-with-category';
 
 @CommandHandler(UpdateExpenseCommand)
 export class UpdateExpenseHandler
@@ -37,11 +37,13 @@ export class UpdateExpenseHandler
       }
     }
 
-    return this.expenseRepository.update(command.id, {
+    const row = await this.expenseRepository.update(command.id, {
       amount: command.amount,
       description: command.description,
       date: command.date ? new Date(command.date) : undefined,
       categoryId: command.categoryId,
     });
+
+    return toExpenseWithCategory(row);
   }
 }

@@ -3,6 +3,8 @@ export {
   ExpenseList,
   ExpenseSummary,
   CreateExpenseDialog,
+  EditExpenseDialog,
+  DeleteExpenseDialog,
 } from './ui';
 export {
   getExpenses,
