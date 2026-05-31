@@ -48,108 +48,15 @@ npm -w packages/prisma run db:seed          # Заполнить БД начал
 
 ## Бэкенд (`apps/backend`)
 
-Nest.js 11 на порту **3001**. Глобальный префикс `/api`.
+Подробная документация: [`apps/backend/CLAUDE.md`](apps/backend/CLAUDE.md)
 
-### Реализованные эндпоинты
-
-- `GET /api/health` → `{ status: "ok" }`
-- `POST /api/auth/register` → регистрация, возвращает `{ accessToken }`
-- `POST /api/auth/login` → вход, возвращает `{ accessToken }`
-- `POST /api/categories` → создать категорию (JWT)
-- `GET /api/categories` → список категорий пользователя (JWT)
-- `GET /api/categories/:id` → категория по ID (JWT, ownership)
-- `PUT /api/categories/:id` → обновить категорию (JWT, ownership)
-- `DELETE /api/categories/:id` → удалить категорию (JWT, ownership)
-
-### Архитектура
-
-- **PrismaModule** — глобальный модуль, предоставляет `PrismaService`
-- **UserModule** — модуль пользователей, взаимодействие только через CQRS
-  - Commands: `CreateUserCommand`
-  - Queries: `GetUserByEmailQuery`, `GetUserByIdQuery`
-- **AuthModule** — модуль авторизации через JWT + Passport
-  - Commands: `RegisterCommand`, `LoginCommand`
-  - Стратегия: `JwtStrategy` (Bearer token)
-  - Guard: `JwtAuthGuard` — для защиты маршрутов
-
-- **CategoryModule** — модуль категорий, взаимодействие через CQRS
-  - Commands: `CreateCategoryCommand`, `UpdateCategoryCommand`, `DeleteCategoryCommand`
-  - Queries: `GetCategoriesByUserQuery`, `GetCategoryByIdQuery`
-  - Все эндпоинты защищены `JwtAuthGuard`, проверка ownership в хендлерах
-
-Модули взаимодействуют **только через CQRS-шины** (`CommandBus`, `QueryBus`), без прямых импортов сервисов.
-
-### Переменные окружения
-
-| Переменная | Описание |
-|-----------|----------|
-| `JWT_SECRET` | Секрет для подписи JWT |
-| `JWT_EXPIRES_IN` | Время жизни токена (по умолчанию `7d`) |
-
-### Что не реализовано
-
-- API эндпоинты для расходов
-
-### Скрипты бэкенда
-
-```bash
-npm run dev:backend    # Запуск в dev-режиме (watch)
-npm run build:backend  # Сборка
-```
+Nest.js 11 на порту **3001**. Глобальный префикс `/api`. Архитектура CQRS (CommandBus + QueryBus). Модули: Prisma (глобальный), User, Auth (JWT + Passport), Category, Expense.
 
 ## Фронтенд (`apps/frontend`)
 
-Next.js 16 (App Router) + React 19 + Tailwind CSS v4 + shadcn/ui на порту **3000**.
+Подробная документация: [`apps/frontend/CLAUDE.md`](apps/frontend/CLAUDE.md)
 
-### Архитектура — Feature Slice Design (FSD)
-
-```
-src/
-├── app/                    # Роутинг Next.js (App Router)
-│   ├── (auth)/             # Route group: auth-страницы
-│   │   ├── login/          # /login
-│   │   └── register/       # /register
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx            # /
-├── features/               # Фичи (бизнес-логика по доменам)
-│   └── auth/
-│       ├── api/            # API-вызовы (login, register)
-│       ├── model/          # Стор (Zustand), типы состояния
-│       ├── ui/             # React-компоненты фичи (формы)
-│       └── index.ts        # Публичный API фичи
-├── shared/                 # Общий код
-│   ├── api/                # HTTP-клиент (apiFetch, ApiError)
-│   └── lib/                # Утилиты (auth token helpers)
-├── components/             # shadcn/ui компоненты
-│   └── ui/
-└── lib/                    # Общие утилиты (cn)
-```
-
-**Правила FSD:**
-- Слайцы: `features` → `shared`. Импорт только внутрь по слоям.
-- Каждая фича экспортирует публичный API через `index.ts`.
-- Страницы (`app/`) импортируют только из `features/` и `shared/`.
-- `shared/` не импортирует `features/`.
-
-### Реализованные страницы
-
-- `/` — главная страница с навигацией
-- `/login` — форма входа
-- `/register` — форма регистрации
-
-### Что не реализовано
-
-- Список расходов
-- Формы добавления/редактирования расходов
-- Дашборд / аналитика
-
-### Скрипты фронтенда
-
-```bash
-npm run dev:frontend    # Запуск в dev-режиме (Turbopack)
-npm run build:frontend  # Сборка
-```
+Next.js 16 (App Router) + React 19 + Tailwind CSS v4 + shadcn/ui (@base-ui/react) на порту **3000**. Архитектура Feature Slice Design (FSD). Сторы на Zustand.
 
 ## Инфраструктура
 
@@ -190,9 +97,11 @@ npm run dev:backend    # http://localhost:3001
 npm run lint     # Линтинг всего проекта
 npm run format   # Форматирование кода (Prettier)
 ```
+<important if="Нужно написать коммит">
 ## Соглашение о коммитах
 Используй Conventional Commits:
 - Тип: feat, fix, docs, refactor, test, ci
 - Область (scope): модуль или область изменений
 - Описание на русском, кратко
 - Breaking changes помечай восклицательным знаком
+</important>
