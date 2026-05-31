@@ -1,8 +1,9 @@
 'use client';
 
 import type { Expense } from '../api/types';
-import { getCategoryIcon } from '@/shared/lib';
-import { formatAmount, CURRENCY_SYMBOL } from '@/shared/lib';
+import { EditExpenseDialog } from './edit-expense-dialog';
+import { DeleteExpenseDialog } from './delete-expense-dialog';
+import { getCategoryIcon, formatAmount, CURRENCY_SYMBOL } from '@/shared/lib';
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -53,6 +54,10 @@ export function ExpenseCard({ expense }: { expense: Expense }) {
         <span className="text-xs text-muted-foreground">
           {formatDate(expense.date)}
         </span>
+      </div>
+      <div className="flex items-center gap-0.5">
+        <EditExpenseDialog expense={expense} />
+        <DeleteExpenseDialog expense={expense} />
       </div>
     </div>
   );

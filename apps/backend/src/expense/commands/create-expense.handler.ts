@@ -3,23 +3,7 @@ import { CreateExpenseCommand } from './create-expense.command';
 import { ExpenseRepository } from '../expense.repository';
 import { CategoryRepository } from '../../category/category.repository';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
-
-export interface ExpenseWithCategory {
-  id: string;
-  amount: number;
-  description: string | null;
-  date: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-  categoryId: string;
-  category: {
-    id: string;
-    name: string;
-    color: string | null;
-    icon: string | null;
-  };
-}
+import { ExpenseWithCategory, toExpenseWithCategory } from '../expense-with-category';
 
 @CommandHandler(CreateExpenseCommand)
 export class CreateExpenseHandler
@@ -41,12 +25,14 @@ export class CreateExpenseHandler
       throw new ForbiddenException('Access denied');
     }
 
-    return this.expenseRepository.create({
+    const row = await this.expenseRepository.create({
       amount: command.amount,
       description: command.description,
       date: command.date ? new Date(command.date) : undefined,
       categoryId: command.categoryId,
       userId: command.userId,
     });
+
+    return toExpenseWithCategory(row);
   }
 }

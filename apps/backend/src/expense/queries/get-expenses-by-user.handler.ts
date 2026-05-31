@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetExpensesByUserQuery } from './get-expenses-by-user.query';
 import { ExpenseRepository } from '../expense.repository';
-import { ExpenseWithCategory } from '../commands/create-expense.handler';
+import { ExpenseWithCategory, toExpenseWithCategory } from '../expense-with-category';
 
 export interface PaginatedExpenses {
   items: ExpenseWithCategory[];
@@ -28,7 +28,7 @@ export class GetExpensesByUserHandler
     ]);
 
     return {
-      items,
+      items: items.map(toExpenseWithCategory),
       total,
       page: query.page,
       limit: query.limit,

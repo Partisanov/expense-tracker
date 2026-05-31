@@ -24,7 +24,7 @@ import { DeleteExpenseCommand } from './commands/delete-expense.command';
 import { GetExpensesByUserQuery } from './queries/get-expenses-by-user.query';
 import { GetExpenseByIdQuery } from './queries/get-expense-by-id.query';
 import { GetExpenseStatsQuery } from './queries/get-expense-stats.query';
-import { ExpenseWithCategory } from './commands/create-expense.handler';
+import { ExpenseWithCategory } from './expense-with-category';
 import { PaginatedExpenses } from './queries/get-expenses-by-user.handler';
 import { ExpenseStats } from './queries/get-expense-stats.handler';
 

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { getCategories } from '../api';
 import { useCategoryStore } from '../model';
+import { EditCategoryDialog } from './edit-category-dialog';
+import { DeleteCategoryDialog } from './delete-category-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getCategoryIcon } from '@/shared/lib';
@@ -75,6 +77,10 @@ export function CategoryList() {
               style={{ backgroundColor: category.color }}
             />
           )}
+          <div className="flex items-center gap-0.5">
+            <EditCategoryDialog category={category} />
+            <DeleteCategoryDialog category={category} />
+          </div>
         </div>
       ))}
     </div>

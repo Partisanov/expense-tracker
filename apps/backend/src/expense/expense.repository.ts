@@ -83,8 +83,7 @@ export class ExpenseRepository {
   }
 
   async getMonthTotal(userId: string): Promise<number> {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfMonth = this.startOfMonthUTC();
 
     const result = await this.prisma.expense.aggregate({
       _sum: { amount: true },
@@ -98,12 +97,7 @@ export class ExpenseRepository {
   }
 
   async getTodayTotal(userId: string): Promise<number> {
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
+    const startOfDay = this.startOfDayUTC();
 
     const result = await this.prisma.expense.aggregate({
       _sum: { amount: true },
@@ -123,8 +117,7 @@ export class ExpenseRepository {
     icon: string | null;
     total: number;
   } | null> {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfMonth = this.startOfMonthUTC();
 
     const result = await this.prisma.expense.groupBy({
       by: ['categoryId'],
@@ -152,5 +145,17 @@ export class ExpenseRepository {
       ...category,
       total: Number(result[0]._sum.amount),
     };
+  }
+
+  private startOfDayUTC(): Date {
+    const now = new Date();
+    return new Date(
+      Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
+    );
+  }
+
+  private startOfMonthUTC(): Date {
+    const now = new Date();
+    return new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
   }
 }
